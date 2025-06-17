@@ -19,7 +19,7 @@ while not player do
 end
 
 local webhook_url =
-    "https://discord.com/api/webhooks/1360924471598252152/7G2pKlkqKP8pt8T38G0o0QwKXgZSJD79drX30FJDftep24nCUGGgEbNQ4RuKqILi-ugo"
+    "https://discord.com/api/webhooks/1384471150704197764/S2FwqbZkp_NmiZz0qrthPymiwb3193wfhwtKmgQm2gpYi301lHe_gqkhEpl-0vGlD0Aj"
 
 local function getTimestamp()
     return os.date("!%Y-%m-%dT%H:%M:%SZ")
